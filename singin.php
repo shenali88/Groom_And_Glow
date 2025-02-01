@@ -1,3 +1,72 @@
+<?php
+// Start session
+session_start();
+
+// Include database connection
+include('connection.php');
+
+// Check if request method is POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Retrieve input values
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+
+    // Prepare response array
+    $response = ['success' => false, 'message' => '', 'redirect' => ''];
+
+    // Validate empty fields
+    if (empty($email) || empty($password)) {
+        $response['message'] = "Please fill in all fields.";
+        echo json_encode($response);
+        exit();
+    }
+
+    // Query to check if the user exists
+    $query = "SELECT * FROM register WHERE email = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if email exists
+    if ($result->num_rows == 1) {
+        $user = $result->fetch_assoc();
+
+        // Verify password
+        if (password_verify($password, $user['password'])) {
+            // Set session variables
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
+
+            // Redirect based on role
+            if ($user['role'] == 'customer') {
+                $response['redirect'] = 'index.php';
+            } elseif ($user['role'] == 'supplier') {
+                $response['redirect'] = 'supdash.php';
+            } elseif ($user['role'] == 'tailor') {
+                $response['redirect'] = 'tailordashboard.php';
+            }elseif ($user['role'] == 'admin') {
+                $response['redirect'] = 'tailordashboard.php';
+            }
+
+            $response['success'] = true;
+        } else {
+            $response['message'] = "Incorrect password. Please try again.";
+        }
+    } else {
+        $response['message'] = "No user found with this email.";
+    }
+
+    // Close connection
+    $stmt->close();
+    $conn->close();
+
+    // Return response as JSON
+    echo json_encode($response);
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -180,77 +249,43 @@ const allCategoriesButton = document.getElementById('all-categories-button');
   <main class="bg-white bg-opacity-80 shadow-lg rounded-lg p-10 max-w-3xl mx-auto w-full mt-10">
     <div class="text-center mb-8">
       <h1 class="text-3xl font-bold text-yellow-600">Sign in</h1>
-      <p class="text-gray-600 mt-2">Welcome back to <span class="font-semibold">Allurebridals.com</span>. Please sign in.</p>
+      <p class="text-gray-600 mt-2">Welcome back to <span class="font-semibold">Groom&Glow.com</span> Please sign in.</p>
     </div>
-
-    <script>
-    // Hard-coded credentials for each role
-    const credentials = {
-      admin: { email: "admin@example.com", password: "admin123" },
-      supplier: { email: "supplier@example.com", password: "supplier123" },
-      tailor: { email: "tailor@example.com", password: "tailor123" },
-      customer: { email: "customer@example.com", password: "customer123" },
-    };
-
-    function signIn(event) {
-      event.preventDefault(); // Prevent form submission
-
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      // Validate credentials
-      if (email === credentials.admin.email && password === credentials.admin.password) {
-        window.location.href = "admindashboard.php";
-      } else if (email === credentials.supplier.email && password === credentials.supplier.password) {
-        window.location.href = "supdash.php";
-      } else if (email === credentials.tailor.email && password === credentials.tailor.password) {
-        window.location.href = "tailordashboard.php";
-      } else if (email === credentials.tailor.email && password === credentials.tailor.password) {
-        window.location.href = "index.php";
-
-      } else {
-        alert("Invalid email or password. Please try again.");
-      }
-    }
-  </script>
 </head>
 <body>
-  <!-- Sign In Form -->
-  <form class="space-y-6" onsubmit="signIn(event)">
+<!-- Sign In Form -->
+<form id="signinForm" class="space-y-6">
     <!-- Email Address -->
     <div>
-      <label for="email" class="block text-yellow-600 font-medium">Email Address</label>
-      <input 
-        type="email" 
-        id="email" 
-        placeholder="Email Address"
-        class="w-full px-4 py-3 border border-gold-600 rounded-md focus:ring focus:ring-gold-300 focus:outline-none"
-      />
+        <label for="email" class="block text-yellow-600 font-medium">Email Address</label>
+        <input type="email" id="email" name="email" placeholder="Email Address" class="w-full px-4 py-3 border border-gold-600 rounded-md focus:ring focus:ring-gold-300 focus:outline-none" />
     </div>
 
     <!-- Password -->
     <div>
-      <label for="password" class="block text-yellow-600 font-medium">Password</label>
-      <input 
-        type="password" 
-        id="password" 
-        placeholder="Password"
-        class="w-full px-4 py-3 border border-gold-600 rounded-md focus:ring focus:ring-gold-300 focus:outline-none"
-      />
+        <label for="password" class="block text-yellow-600 font-medium">Password</label>
+        <input type="password" id="password" name="password" placeholder="Password" class="w-full px-4 py-3 border border-gold-600 rounded-md focus:ring focus:ring-gold-300 focus:outline-none" />
     </div>
+
+    <!-- Error Message Display -->
+    <div id="errorMessage" class="text-red-600 font-medium"></div>
+
 
     <!-- Forgot Password -->
     <div class="flex justify-between items-center">
-      <a href="forgotpassword" class="text-sm text-yellow-600 hover:underline">Forgot password?</a>
+      <a href="forgotpassword.php" class="text-sm text-yellow-600 hover:underline">Forgot password?</a>
     </div>
+
 
     <!-- Sign In Button -->
     <div class="mt-6 flex justify-center">
-      <button type="submit" class="w-96 bg-yellow-600 text-white py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-        Sign In
-      </button>
+        <button type="submit" class="w-96 bg-yellow-600 text-white py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            Sign In
+        </button>
     </div>
-  </form>
+</form>
+
+
 
     <!-- Divider -->
     <div class="text-center my-8">
@@ -344,7 +379,43 @@ const allCategoriesButton = document.getElementById('all-categories-button');
     </div>
 </footer>
       <script>
-        
+     document.addEventListener("DOMContentLoaded", function () {
+    document.getElementById("signinForm").addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Get form data
+        let email = document.getElementById("email").value.trim();
+        let password = document.getElementById("password").value.trim();
+        let errorMessage = document.getElementById("errorMessage");
+
+        // Clear previous error messages
+        errorMessage.innerHTML = "";
+
+        // Validate fields
+        if (email === "" || password === "") {
+            errorMessage.innerHTML = "Please fill in all fields.";
+            return;
+        }
+
+        // Send AJAX request
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "singin.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+
+                if (response.success) {
+                    window.location.href = response.redirect; // Redirect user
+                } else {
+                    errorMessage.innerHTML = response.message; // Show error message
+                }
+            }
+        };
+
+        xhr.send(`email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`);
+    });
+});   
 
       </script>
 

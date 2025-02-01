@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,47 +98,88 @@
     <!-- Content -->
     <main class="flex-1 p-6 space-y-8">
 
-   
-        <!-- Customer Personal Details -->
-        <div class="bg-white shadow-2xl rounded-lg p-6">
-            <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Personal Details</h2>
-            <div class="flex items-center space-x-4 mb-6">
-          <input type="text" placeholder="Enter Customer ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-          <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+<<!-- Customer Personal Details -->
+<div class="bg-white shadow-2xl rounded-lg p-6">
+    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Personal Details</h2>
+    
+    <!-- Form for Search by ID -->
+    <form method="POST" action="">
+        <div class="flex items-center space-x-4 mb-6">
+            <input type="text" name="customer_id" value="<?php if(isset($_POST['customer_id']) && !isset($_POST['clear'])) echo $_POST['customer_id']; ?>" placeholder="Enter Customer ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" name="search" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
+            <button type="submit" name="clear" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
+            <button type="submit" name="view_all" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
         </div>
-            <table class="min-w-full table-auto border-collapse border border-gray-300">
-            <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-                    <tr>
-                        <th class="px-6 py-4 border">Customer ID</th>
-                        <th class="px-6 py-4 border">First Name</th>
-                        <th class="px-6 py-4 border">Last Name</th>
-                        <th class="px-6 py-4 border">Email</th>
-                        <th class="px-6 py-4 border">Mobile Number</th>
-                        <th class="px-6 py-4 border">Wedding date</th>
-                        
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="hover:bg-teal-100">
-                        <td class="px-6 py-4 border">C001</td>
-                        <td class="px-6 py-4 border">John</td>
-                        <td class="px-6 py-4 border">Doe</td>
-                        <td class="px-6 py-4 border">john.doe@example.com</td>
-                        <td class="px-6 py-4 border">0773456437</td>
-                        <td class="px-6 py-4 border">2025-06-15</td>
-                    </tr>
-                    <tr class="hover:bg-teal-100">
-                        <td class="px-6 py-4 border">C002</td>
-                        <td class="px-6 py-4 border">Jane</td>
-                        <td class="px-6 py-4 border">Smith</td>
-                        <td class="px-6 py-4 border">jane.smith@example.com</td>
-                        <td class="px-6 py-4 border">0775654356</td>
-                        <td class="px-6 py-4 border">2025-07-20</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+    </form>
+    
+    <!-- Table to display the results -->
+    <table class="min-w-full table-auto border-collapse border border-gray-300">
+        <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+            <tr>
+                <th class="px-6 py-4 border">Customer ID</th>
+                <th class="px-6 py-4 border">First Name</th>
+                <th class="px-6 py-4 border">Last Name</th>
+                <th class="px-6 py-4 border">Email</th>
+                <th class="px-6 py-4 border">Mobile Number</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            include 'connection.php';
+
+            // If Clear button is clicked, do not show any data
+            if (isset($_POST['clear'])) {
+                $sql = null;
+            }
+            // View all customers
+            elseif (isset($_POST['view_all'])) {
+                $sql = "SELECT id, first_name, last_name, email, mobile_number FROM register WHERE role = 'customer'";
+            }
+            // Search for a specific customer by ID
+            elseif (isset($_POST['search']) && !empty($_POST['customer_id'])) {
+                $customer_id = $_POST['customer_id'];
+                $sql = "SELECT id, first_name, last_name, email, mobile_number FROM register WHERE role = 'customer' AND id = ?";
+            } 
+            // If no action, show nothing
+            else {
+                $sql = null;
+            }
+
+            // Execute the query
+            if ($sql) {
+                if (isset($_POST['search']) && !empty($customer_id)) {
+                    // Prepare and bind the statement to avoid SQL injection
+                    if ($stmt = $conn->prepare($sql)) {
+                        $stmt->bind_param("i", $customer_id); // Bind the customer_id to the query
+                        $stmt->execute(); // Execute the query
+                        $result = $stmt->get_result();
+                    }
+                } else {
+                    $result = $conn->query($sql);
+                }
+
+                // Check if any result is found
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["id"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["first_name"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["last_name"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["email"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["mobile_number"]) . "</td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='5' class='px-6 py-4 border text-center'>No customers found</td></tr>";
+                }
+            }
+
+            $conn->close();
+            ?>
+        </tbody>
+    </table>
+</div>
+
 
         <!-- Customer Item Details -->
         <div class="bg-white shadow-2xl rounded-lg p-6">

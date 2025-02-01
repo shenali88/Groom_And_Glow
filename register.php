@@ -1,3 +1,116 @@
+<?php
+ob_start(); // Start output buffering at the very top
+
+// Include the database connection file
+include('connection.php');
+
+// Initialize error messages for each field
+$first_name_err = $last_name_err = $email_err = $mobile_number_err = $password_err = $confirm_password_err = $role_err = "";
+$first_name = $last_name = $email = $mobile_number = $password = $confirmPassword = $role = "";
+$formIsValid = true;
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Retrieve and sanitize form data
+    $first_name = trim($_POST['first_name']);
+    $last_name = trim($_POST['last_name']);
+    $email = trim($_POST['email']);
+    $mobile_number = trim($_POST['mobile_number']);
+    $password = $_POST['password'];
+    $confirmPassword = $_POST['confirm_password'];
+    $role = trim($_POST['role']);
+
+// Validate first name (only letters)
+if (empty($first_name)) {
+    $first_name_err = "First Name is required.";
+    $formIsValid = false;
+} elseif (!preg_match("/^[a-zA-Z]+$/", $first_name)) {
+    $first_name_err = "First Name should only contain letters.";
+    $formIsValid = false;
+}
+
+// Validate last name (only letters)
+if (empty($last_name)) {
+    $last_name_err = "Last Name is required.";
+    $formIsValid = false;
+} elseif (!preg_match("/^[a-zA-Z]+$/", $last_name)) {
+    $last_name_err = "Last Name should only contain letters.";
+    $formIsValid = false;
+}
+    // Validate email
+    if (empty($email)) {
+        $email_err = "Email Address is required.";
+        $formIsValid = false;
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $email_err = "Invalid email format.";
+        $formIsValid = false;
+    }
+
+    // Validate mobile number (ensure it's 10 digits)
+    if (empty($mobile_number)) {
+        $mobile_number_err = "Mobile Number is required.";
+        $formIsValid = false;
+    } elseif (!preg_match("/^[0-9]{10}$/", $mobile_number)) {
+        $mobile_number_err = "Invalid mobile number. Please enter a 10-digit number.";
+        $formIsValid = false;
+    }
+
+    // Validate passwords
+    if (empty($password)) {
+        $password_err = "Password is required.";
+        $formIsValid = false;
+    } elseif ($password !== $confirmPassword) {
+        $confirm_password_err = "Passwords do not match.";
+        $formIsValid = false;
+    }
+
+    // Validate role selection
+    if (empty($role)) {
+        $role_err = "Role is required.";
+        $formIsValid = false;
+    }
+
+    // If the form is valid, proceed with insertion
+    if ($formIsValid) {
+        // Check if the email already exists
+        $emailCheckQuery = "SELECT * FROM register WHERE email = ?";
+        $stmt = $conn->prepare($emailCheckQuery);
+        $stmt->bind_param("s", $email);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $email_err = "This email address is already registered. Please use a different one.";
+            $formIsValid = false;
+        } else {
+            // Hash the password for secure storage
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+            // Use prepared statement to insert data into the 'register' table
+            $stmt = $conn->prepare("INSERT INTO register (first_name, last_name, email, mobile_number, password, role) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssss", $first_name, $last_name, $email, $mobile_number, $hashedPassword, $role);
+
+            // Check if the insertion is successful
+            if ($stmt->execute()) {
+                // Redirect to signin.php after successful registration
+                header('Location:singin.php');
+                exit();  // Don't forget to call exit after header to stop further code execution
+            } else {
+                // Database insertion failed
+                echo "<script>alert('Error registering user.'); window.location='register.php';</script>";
+            }
+        }
+
+        // Close the statement and database connection
+        $stmt->close();
+    }
+}
+
+// End output buffering and flush output
+ob_end_flush();
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -207,42 +320,77 @@ window.addEventListener('click', (e) => {
     </p>
     
     
-    <form action="/register" method="POST" class="space-y-6">
-        
-      <div>
+    <form action="register.php" method="POST" class="space-y-6">
+    <!-- First Name -->
+    <div>
         <label for="first_name" class="block text-sm font-medium text-yellow-600">First Name</label>
-        <input type="text" id="first_name" name="first_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="First Name" required>
-      </div>
-      <div>
+        <input type="text" id="first_name" name="first_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="First Name" value="<?php echo $first_name; ?>" required>
+        <?php if (!empty($first_name_err)) { echo "<span class='text-red-500 text-sm'>$first_name_err</span>"; } ?>
+    </div>
+
+    <!-- Last Name -->
+    <div>
         <label for="last_name" class="block text-sm font-medium text-yellow-600">Last Name</label>
-        <input type="text" id="last_name" name="last_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Last Name" required>
-      </div>
-      <div>
+        <input type="text" id="last_name" name="last_name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Last Name" value="<?php echo $last_name; ?>" required>
+        <?php if (!empty($last_name_err)) { echo "<span class='text-red-500 text-sm'>$last_name_err</span>"; } ?>
+    </div>
+
+    <!-- Email Address -->
+    <div>
         <label for="email" class="block text-sm font-medium text-yellow-600">Email Address</label>
-        <input type="email" id="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Email Address" required>
-      </div>
-      <div>
+        <input type="email" id="email" name="email" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Email Address" value="<?php echo $email; ?>" required>
+        <?php if (!empty($email_err)) { echo "<span class='text-red-500 text-sm'>$email_err</span>"; } ?>
+    </div>
+
+    <!-- Mobile Number -->
+    <div>
         <label for="mobile_number" class="block text-sm font-medium text-yellow-600">Mobile Number</label>
-        <input type="tel" id="mobile_number" name="mobile_number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Mobile Number" required>
-      </div>
-      <div>
-        <label for="wedding_date" class="block text-sm font-medium text-yellow-600">Wedding Date</label>
-        <input type="date" id="wedding_date" name="wedding_date" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-      </div>
-      <div>
+        <input type="tel" id="mobile_number" name="mobile_number" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Mobile Number" value="<?php echo $mobile_number; ?>" required>
+        <?php if (!empty($mobile_number_err)) { echo "<span class='text-red-500 text-sm'>$mobile_number_err</span>"; } ?>
+    </div>
+
+    <!-- Password -->
+    <div>
         <label for="password" class="block text-sm font-medium text-yellow-600">Password</label>
         <input type="password" id="password" name="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Password" required>
-      </div>
-      <div>
+        <?php if (!empty($password_err)) { echo "<span class='text-red-500 text-sm'>$password_err</span>"; } ?>
+    </div>
+
+    <!-- Confirm Password -->
+    <div>
         <label for="confirm_password" class="block text-sm font-medium text-yellow-600">Confirm Password</label>
         <input type="password" id="confirm_password" name="confirm_password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Confirm Password" required>
-      </div>
-      <div class="mt-6">
-        <button type="submit" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-md shadow  focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-          Register
+        <?php if (!empty($confirm_password_err)) { echo "<span class='text-red-500 text-sm'>$confirm_password_err</span>"; } ?>
+    </div>
+
+    <!-- Role Selection -->
+    <div>
+        <label class="block text-sm font-medium text-yellow-600">Select who you are</label>
+        <div class="mt-2 space-y-2">
+            <label class="inline-flex items-center">
+                <input type="radio" name="role" value="customer" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500" <?php echo ($role == "customer") ? "checked" : ""; ?> required>
+                <span class="ml-2 text-yellow-600">Customer</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="radio" name="role" value="supplier" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500" <?php echo ($role == "supplier") ? "checked" : ""; ?> required>
+                <span class="ml-2 text-yellow-600">Supplier</span>
+            </label>
+            <label class="inline-flex items-center">
+                <input type="radio" name="role" value="tailor" class="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500" <?php echo ($role == "tailor") ? "checked" : ""; ?> required>
+                <span class="ml-2 text-yellow-600">Tailor</span>
+            </label>
+            <?php if (!empty($role_err)) { echo "<span class='text-red-500 text-sm'>$role_err</span>"; } ?>
+        </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="mt-6">
+        <button type="submit" class="w-full bg-yellow-600 text-white py-2 px-4 rounded-md shadow focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+            Register
         </button>
-      </div>
-    </form>
+    </div>
+</form>
+
   </div>
     <!-- Retailer Login -->
     <aside class="mt-8 text-center">
@@ -330,8 +478,5 @@ window.addEventListener('click', (e) => {
         <p class="text-sm text-gray-400">© 2024 Groom & Glow. All Rights Reserved. | Designed with❤️</p>
     </div>
 </footer>
-
-  
-
 </body>
 </html>
