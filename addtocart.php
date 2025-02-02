@@ -1,9 +1,21 @@
+<?php
+ include 'connection.php';
+
+// Get item details from URL parameter
+$item_id = isset($_GET['item_id']) ? (int)$_GET['item_id'] : 0;
+
+$sql = "SELECT * FROM supplied_items WHERE item_id = $item_id";
+$result = $conn->query($sql);
+$item = $result->fetch_assoc();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Product Details</title>
+  <title><?php echo $item["item_name"]; ?></title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -56,7 +68,7 @@
 
     <!-- Logo -->
   
-    <h1 class="text-3xl font-bold text-yellow-600">Groom & Glow</h1>
+  <h1 class="text-3xl font-bold text-yellow-600">Groom & Glow</h1>
 
 
     <!-- Navigation Links -->
@@ -166,104 +178,61 @@ window.addEventListener('click', (e) => {
 });
 </script>
 
-
-<!-- Product Details -->
-<div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
-  <!-- Product Image -->
-  <div>
-    <img id="product-image" src="" alt="Product Image" class="w-full h-auto rounded-lg shadow-md">
-  </div>
-
-  <!-- Product Info -->
-  <div>
-    <h1 id="product-title" class="text-3xl font-bold"></h1>
-    <p id="product-price" class="mt-3 text-xl font-semibold text-gray-800"></p>
-
-    <!-- Color -->
-    <div class="mt-6">
-      <p class="text-sm text-gray-600">Color</p>
-      <div id="product-color" class="mt-2 text-gray-800 font-medium"></div>
-    </div>
-
-    <!-- Size Selection -->
-    <div class="mt-6">
-      <p class="text-sm text-gray-600">Sizes</p>
-      <div id="product-sizes" class="flex items-center gap-2 mt-2"></div>
-    </div>
- <!-- Payment Details Section -->
- <div class="mt-6 bg-gray-100 p-4 rounded-lg shadow">
-      <p class="text-sm font-semibold text-gray-800">Delivery within 24 hours</p>
-      <p class="text-sm font-semibold text-gray-800">Low-cost islandwide delivery</p>
-      <p class="text-sm font-semibold text-gray-800">In Stock</p>
-
-      <!-- Card Offers -->
-      <div class="mt-4">
-        <p class="text-sm font-semibold text-gray-600">Card Offers</p>
-        <div class="mt-2 flex gap-4">
-          <div class="flex items-center gap-2 border p-2 rounded-lg">
-            <img src="https://th.bing.com/th/id/OIP.5axoxKaPm_TZdSymAzKZygHaDt?w=500&h=250&rs=1&pid=ImgDetMain" alt="Payment Icon" class="w-8 h-8">
-            <div>
-              <p class="text-xs font-semibold">Installments Rs. 2,290</p>
-              <p class="text-xs text-gray-600">Up to 3 months</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2 border p-2 rounded-lg">
-            <img src="https://th.bing.com/th/id/OIP.LdEuOZxKDz1jP9lnTp51WAAAAA?w=474&h=464&rs=1&pid=ImgDetMain" alt="Payment Icon" class="w-8 h-8">
-            <div>
-              <p class="text-xs font-semibold">Installments Rs. 332</p>
-              <p class="text-xs text-gray-600">Up to 24 months</p>
-            </div>
-          </div>
+<body class="bg-gray-100">
+<div class="container mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Product Image -->
+        <div>
+            <img src="<?php echo $item["image_url"]; ?>" class="w-full rounded-lg shadow-lg" alt="<?php echo $item["item_name"]; ?>">
         </div>
-      </div>
+        
+        <!-- Product Details -->
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900"><?php echo $item["item_name"]; ?></h1>
+            <p class="text-gray-600 text-xl mt-2">Rs. <?php echo number_format($item["price"], 2); ?></p>
+            
+            <div class="mt-4">
+                <span class="text-gray-700 font-semibold">Color:</span>
+                <span class="text-gray-600"><?php echo $item["color"]; ?></span>
+            </div>
+
+            <div class="mt-4">
+                <span class="text-gray-700 font-semibold">Sizes:</span>
+                <div class="mt-2 flex space-x-2">
+                    <?php
+                    $sizes = explode(',', $item["sizes"]);
+                    foreach ($sizes as $size) {
+                        echo '<span class="px-3 py-1 bg-gray-200 text-gray-800 rounded-md">' . trim($size) . '</span>';
+                    }
+                    ?>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-100 rounded-lg">
+                <p class="text-green-600 font-semibold">✔️ Delivery within 24 hours</p>
+                <p class="text-gray-600">✔️ Low-cost islandwide delivery</p>
+                <p class="text-gray-600">✔️ In Stock</p>
+            </div>
+
+            <div class="mt-6 flex space-x-4">
+                <button class="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg font-semibold">
+                    Add to Cart
+                </button>
+                <button class="w-full bg-gray-600 hover:bg-gray-700 text-white py-3 rounded-lg font-semibold">
+                    Continue Shopping
+                </button>
+            </div>
+
+            <button class="w-full mt-3 bg-gray-800 hover:bg-black text-white py-3 rounded-lg font-semibold">
+                Check out
+            </button>
+        </div>
     </div>
-
-
-    <!-- Buttons -->
-    <div class="mt-6">
-      <!-- Add to Cart Button -->
-      <button id="add-to-cart" class="w-full px-4 py-3 bg-yellow-500 text-white font-medium rounded-lg hover:bg-yellow-600 transition">
-        Add to Cart
-      </button>
-
-      <!-- Continue Shopping Button -->
-      <button id="continue-shopping" class="mt-4 w-full px-4 py-3 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition" onclick="window.location.href='bridaldress.php'">
-  Continue Shopping
-</button>
- 
-   <!-- Continue Shopping Button -->
-   <button id="continue-shopping" class="mt-4 w-full px-4 py-3 bg-gray-500 text-white font-medium rounded-lg hover:bg-gray-600 transition" onclick="window.location.href='checkout.php'">
-  Check out
-</button>
-
-    </div>
-  </div>
 </div>
 
 
   <script>
-    // JavaScript to fetch product details from query string
-    const urlParams = new URLSearchParams(window.location.search);
-    const title = urlParams.get('title');
-    const price = urlParams.get('price');
-    const color = urlParams.get('color');
-    const sizes = urlParams.get('sizes') ? urlParams.get('sizes').split(',') : [];
-    const image = urlParams.get('image');
 
-    // Populate product details
-    document.getElementById('product-image').src = image;
-    document.getElementById('product-title').textContent = title;
-    document.getElementById('product-price').textContent = `Rs. ${price}`;
-    document.getElementById('product-color').textContent = color;
-
-    // Populate sizes
-    const sizesContainer = document.getElementById('product-sizes');
-    sizes.forEach(size => {
-      const sizeButton = document.createElement('button');
-      sizeButton.textContent = size;
-      sizeButton.className = 'px-4 py-2 text-sm bg-gray-200 rounded hover:bg-gray-300 focus:ring focus:ring-gray-400';
-      sizesContainer.appendChild(sizeButton);
-    });
 
     // Cart Count Logic
     let cartCount = 0; // Initialize cart count
