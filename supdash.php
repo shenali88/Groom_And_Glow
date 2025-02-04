@@ -1,5 +1,5 @@
 <?php
- include 'connection.php';
+include 'connection.php';
 
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -12,9 +12,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sizes = $_POST['sizes'];
     $image_url = $_POST['image_url'];
     $total_amount = $_POST['total_amount'];
+    $category = $_POST['category']; // New category field
 
     // Get the supplier_id from the register table where role is 'supplier'
-    $supplier_id_query = "SELECT id FROM register WHERE role = 'supplier' LIMIT 1";  // Adjust as needed to select the correct supplier
+    $supplier_id_query = "SELECT id FROM register WHERE role = 'supplier' LIMIT 1"; // Adjust as needed
     $result = $conn->query($supplier_id_query);
 
     if ($result->num_rows > 0) {
@@ -24,8 +25,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Insert into supplied_items table
-    $insert_query = "INSERT INTO supplied_items (supplier_id, item_name, date, quantity, price, color, sizes, image_url, total_amount) 
-                     VALUES ('$supplier_id', '$item_name', '$date', '$quantity', '$price', '$color', '$sizes', '$image_url', '$total_amount')";
+    $insert_query = "INSERT INTO supplied_items (supplier_id, item_name, date, quantity, price, color, sizes, image_url, total_amount, category) 
+                     VALUES ('$supplier_id', '$item_name', '$date', '$quantity', '$price', '$color', '$sizes', '$image_url', '$total_amount', '$category')";
 
     if ($conn->query($insert_query) === TRUE) {
         echo "<script>alert('New record created successfully');</script>";
@@ -36,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 $conn->close();
 ?>
- 
+
 
 
 <!DOCTYPE html>
@@ -90,51 +91,59 @@ $conn->close();
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Supplied Items Details</h2>
     
     <div class="flex items-center space-x-4 mb-6">
-
-            <input type="text" placeholder="Enter Item ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-            <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-            <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-            <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Add Row</button>
-            <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
-        </div>
-
-        <form method="POST">
-            <table class="min-w-full table-auto border-collapse border border-gray-300">
-                <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-                    <tr>
-                        
-                        <th class="px-6 py-4 border">Item Name</th>   
-                        <th class="px-6 py-4 border">Date</th>
-                        <th class="px-6 py-4 border">Quantity</th>
-                        <th class="px-6 py-4 border">Price</th>
-                        <th class="px-6 py-4 border">Color</th>
-                        <th class="px-6 py-4 border">Sizes</th>
-                        <th class="px-6 py-4 border">Image URL</th>             
-                        <th class="px-6 py-4 border">Total Amount</th>
-                        <th class="px-6 py-4 border">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border">
-                       
-                        <td class="border px-6 py-4"><input type="text" name="item_name" required class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="date" name="date" required class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="number" name="quantity" required class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="text" name="price" required class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="text" name="color" class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="text" name="sizes" class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="text" name="image_url" class="w-full"></td>
-                        <td class="border px-6 py-4"><input type="number" name="total_amount" required class="w-full"></td>
-                        <td class="px-6 py-4 border text-center">
-                            <button type="submit" class="send-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out">
-                                Send
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
+        <input type="text" placeholder="Enter Item ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
+        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Add Row</button>
+        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
     </div>
+
+    <form method="POST">
+        <table class="min-w-full table-auto border-collapse border border-gray-300">
+            <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+                <tr>
+                    <th class="px-6 py-4 border">Item Name</th>   
+                    <th class="px-6 py-4 border">Date</th>
+                    <th class="px-6 py-4 border">Quantity</th>
+                    <th class="px-6 py-4 border">Price</th>
+                    <th class="px-6 py-4 border">Color</th>
+                    <th class="px-6 py-4 border">Sizes</th>
+                    <th class="px-6 py-4 border">Image URL</th>             
+                    <th class="px-6 py-4 border">Total Amount</th>
+                    <th class="px-6 py-4 border">Category</th>
+                    <th class="px-6 py-4 border">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border">
+                    <td class="border px-6 py-4"><input type="text" name="item_name" required class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="date" name="date" required class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="number" name="quantity" required class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="text" name="price" required class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="text" name="color" class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="text" name="sizes" class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="text" name="image_url" class="w-full"></td>
+                    <td class="border px-6 py-4"><input type="number" name="total_amount" required class="w-full"></td>
+                    <td class="border px-6 py-4">
+                        <select name="category" required class="w-full border border-gray-300 rounded-lg px-2 py-1">
+                            <option value="">Select Category</option>
+                            <option value="Bridledress">Bridledres</option>
+                            <option value="Groom wear">Groom wear</option>
+                            <option value="Party dress">Party dress</option>
+                            <option value="Flower bouquets">Flower bouquets</option>
+                            <option value="Jewelry">Jewelry</option>
+                        </select>
+                    </td>
+                    <td class="px-6 py-4 border text-center">
+                        <button type="submit" class="send-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 ease-in-out">
+                            Send
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
 
 <!-- Supplied Items Details -->
 <div class="bg-white shadow-2xl rounded-lg p-6">

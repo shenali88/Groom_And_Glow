@@ -197,22 +197,7 @@
                         <th class="px-6 py-4 border">Price</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr class="hover:bg-teal-100">
-                        <td class="px-6 py-4 border">I001</td>
-                        <td class="px-6 py-4 border">C001</td>
-                        <td class="px-6 py-4 border">Wedding Dress</td>
-                        <td class="px-6 py-4 border">1</td>
-                        <td class="px-6 py-4 border">$500</td>
-                    </tr>
-                    <tr class="hover:bg-teal-100">
-                        <td class="px-6 py-4 border">I002</td>
-                        <td class="px-6 py-4 border">C002</td>
-                        <td class="px-6 py-4 border">Bouquet</td>
-                        <td class="px-6 py-4 border">2</td>
-                        <td class="px-6 py-4 border">$80</td>
-                    </tr>
-                </tbody>
+                
             </table>
         </div>
 

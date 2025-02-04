@@ -2,13 +2,14 @@
  include 'connection.php';
 
 // Fetch data from the table
-$sql = "SELECT item_id, item_name, price, color, image_url FROM supplied_items WHERE supplier_id = 12";
+$sql = "SELECT item_id, item_name, price, color, image_url FROM supplied_items WHERE supplier_id = 12 AND category = 'Party Dress'" ;
 $result = $conn->query($sql);
-?>
+
 
 $conn->close();
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,6 +17,7 @@ $conn->close();
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Party Dresses</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <div class="container mx-auto px-6 py-4 flex justify-between items-center">
 
         <img src="https://th.bing.com/th/id/OIP.grSv6iUFAGYMb7NrhcWxlQAAAA?rs=1&pid=ImgDetMain" alt="Groom & Glow Logo" class="w-20 h-auto">
@@ -177,153 +179,29 @@ const allCategoriesButton = document.getElementById('all-categories-button');
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-
-<!-- Popular Products Section -->
-<div class="px-10 py-6">
-    <h2 class="text-center text-3xl font-bold mb-6">Party Dresses</h2>
-
-  <!-- Product List Section -->
-  <div id="product-list" class="grid grid-cols-4 gap-6 p-6">
-    <!-- Product Card 1 -->
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Short mini Dress"
-      data-price="5900"
-      data-color="Baby pink"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://d44ri6pmeripj.cloudfront.net/morilee/wp-content/uploads/2020/04/9551-0062-scaled.jpg">
-      <img src="https://d44ri6pmeripj.cloudfront.net/morilee/wp-content/uploads/2020/04/9551-0062-scaled.jpg" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Short mini Dress</h3>
-        <p class="text-sm text-gray-500">Baby pink</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
+<body class="bg-gray-100">
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<a href="addtocart.php?item_id=' . $row["item_id"] . '" class="block bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105">';
+                echo '    <img src="' . $row["image_url"] . '" class="w-full h-64 object-cover" alt="' . $row["item_name"] . '">';
+                echo '    <div class="p-4">';
+                echo '        <h2 class="text-lg font-semibold text-gray-800">' . $row["item_name"] . '</h2>';
+                echo '        <p class="text-gray-500">' . $row["color"] . '</p>';
+                echo '        <p class="text-xl font-bold text-gray-900 mt-2">Rs. ' . number_format($row["price"], 2) . '</p>';
+                echo '    </div>';
+                echo '</a>';
+            }
+        } else {
+            echo '<p class="text-gray-700 text-lg">No items found.</p>';
+        }
+        ?>
     </div>
+</div>
 
-    <!-- Repeat Product Card -->
-    <!-- Add 7 more cards with similar structure -->
-
-    <!-- Product Card 2 -->
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Short mini dress"
-      data-price="5000"
-      data-color="Purple"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://th.bing.com/th/id/OIP.Dpx3yfY9UKPvhU9-CEy6KwHaHa?w=736&h=736&rs=1&pid=ImgDetMain">
-      <img src="https://th.bing.com/th/id/OIP.Dpx3yfY9UKPvhU9-CEy6KwHaHa?w=736&h=736&rs=1&pid=ImgDetMain" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Short mini dress</h3>
-        <p class="text-sm text-gray-500">Purple</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,000</div>
-      </div>
-    </div>
-
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="long sleeves party dress"
-      data-price="7000"
-      data-color="Green"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://th.bing.com/th/id/OIP.46LghC_qse8S3w9etAxUmQHaHa?w=540&h=540&rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://th.bing.com/th/id/OIP.46LghC_qse8S3w9etAxUmQHaHa?w=540&h=540&rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">long sleeves party dress</h3>
-        <p class="text-sm text-gray-500">Green</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 7,000</div>
-      </div>
-    </div>
-
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Long sleeves party derss with belt"
-      data-price="6900"
-      data-color=" Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://www.nairaland.com/attachments/9626337_img20190611wa0006_jpeg842ec8d0dd65514e5d79bad9a2958605">
-      <img src="https://www.nairaland.com/attachments/9626337_img20190611wa0006_jpeg842ec8d0dd65514e5d79bad9a2958605" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Long sleeves party derss with belt</h3>
-        <p class="text-sm text-gray-500">Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 6,900</div>
-      </div>
-    </div>
-
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Short mini dress"
-      data-price="5000"
-      data-color="Red"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://th.bing.com/th/id/OIP.WtrHBYDtpuwM7Y4JsFLkHAAAAA?rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://th.bing.com/th/id/OIP.WtrHBYDtpuwM7Y4JsFLkHAAAAA?rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Short mini dress</h3>
-        <p class="text-sm text-gray-500">red</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,000</div>
-      </div>
-    </div>
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Long party dress - Navy Blue"
-      data-price="8000"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://ae01.alicdn.com/kf/HTB1JqLzIpXXXXboXXXXq6xXFXXXp/Luxury-embroidery-Flower-Organza-Cocktail-Dress-with-Pockets-Tea-length-Distinctive-Prom-Formal-Dress-WDW030.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover.jpg">
-      <img src="https://ae01.alicdn.com/kf/HTB1JqLzIpXXXXboXXXXq6xXFXXXp/Luxury-embroidery-Flower-Organza-Cocktail-Dress-with-Pockets-Tea-length-Distinctive-Prom-Formal-Dress-WDW030.jpg" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Long party dress - Navy Blue</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 8,000</div>
-      </div>
-    </div>
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Short mini dress"
-      data-price="5900"
-      data-color="White"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://th.bing.com/th/id/OIP.osZjW1h5n-GUfwQRPbWk-gHaHa?rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://th.bing.com/th/id/OIP.osZjW1h5n-GUfwQRPbWk-gHaHa?rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Short mini dress</h3>
-        <p class="text-sm text-gray-500">White</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Long party dress"
-      data-price="10000"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://th.bing.com/th/id/OIP.PQKbzn_Pb4SjmBY2KN42DgHaJ3?rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://th.bing.com/th/id/OIP.PQKbzn_Pb4SjmBY2KN42DgHaJ3?rs=1&pid=ImgDetMain" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Long party dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 10,000</div>
-      </div>
-    </div>
-
-
-  <script>
+<script>
     // JavaScript to handle product card clicks
     const productCards = document.querySelectorAll('.card');
     productCards.forEach(card => {

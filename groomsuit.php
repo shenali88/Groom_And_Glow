@@ -1,10 +1,25 @@
+<?php
+ include 'connection.php';
+
+// Fetch data from the table
+$sql = "SELECT item_id, item_name, price, color, image_url FROM supplied_items WHERE supplier_id = 12 AND category = 'Groom wear'" ;
+$result = $conn->query($sql);
+
+
+$conn->close();
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Groom Suits</title>
+  <title>Groom suit</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <div class="container mx-auto px-6 py-4 flex justify-between items-center">
 
         <img src="https://th.bing.com/th/id/OIP.grSv6iUFAGYMb7NrhcWxlQAAAA?rs=1&pid=ImgDetMain" alt="Groom & Glow Logo" class="w-20 h-auto">
@@ -166,153 +181,29 @@ const allCategoriesButton = document.getElementById('all-categories-button');
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-
-<!-- Popular Products Section -->
-<div class="px-10 py-6">
-    <h2 class="text-center text-3xl font-bold mb-6">Groom Suits</h2>
-
-  <!-- Product List Section -->
-  <div id="product-list" class="grid grid-cols-4 gap-6 p-6">
-    <!-- Product Card 1 -->
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://ae01.alicdn.com/kf/HTB1TgWLkPuhSKJjSspaq6xFgFXaU/Black-Formal-Men-Suits-2018-Blazer-Men-Slim-Fit-Custom-Wedding-Tuxedos-for-Groom-Three-Piece.jpg" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://ae01.alicdn.com/kf/HTB1TgWLkPuhSKJjSspaq6xFgFXaU/Black-Formal-Men-Suits-2018-Blazer-Men-Slim-Fit-Custom-Wedding-Tuxedos-for-Groom-Three-Piece.jpg" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
+<body class="bg-gray-100">
+<div class="container mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<a href="addtocart.php?item_id=' . $row["item_id"] . '" class="block bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-105">';
+                echo '    <img src="' . $row["image_url"] . '" class="w-full h-64 object-cover" alt="' . $row["item_name"] . '">';
+                echo '    <div class="p-4">';
+                echo '        <h2 class="text-lg font-semibold text-gray-800">' . $row["item_name"] . '</h2>';
+                echo '        <p class="text-gray-500">' . $row["color"] . '</p>';
+                echo '        <p class="text-xl font-bold text-gray-900 mt-2">Rs. ' . number_format($row["price"], 2) . '</p>';
+                echo '    </div>';
+                echo '</a>';
+            }
+        } else {
+            echo '<p class="text-gray-700 text-lg">No items found.</p>';
+        }
+        ?>
     </div>
+</div>
 
-    <!-- Repeat Product Card -->
-    <!-- Add 7 more cards with similar structure -->
-
-    <!-- Product Card 2 -->
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://i.pinimg.com/originals/01/36/e4/0136e459bc3e11484e789683c642929a.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://i.pinimg.com/originals/01/36/e4/0136e459bc3e11484e789683c642929a.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://i.pinimg.com/originals/7e/bc/b9/7ebcb9d06b10986d8785e5d196d0c497.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://i.pinimg.com/originals/7e/bc/b9/7ebcb9d06b10986d8785e5d196d0c497.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://i.pinimg.com/736x/6a/97/d2/6a97d2b17000b4c1eb7c7da7bf10b575.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://i.pinimg.com/736x/6a/97/d2/6a97d2b17000b4c1eb7c7da7bf10b575.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://ae01.alicdn.com/kf/HTB1PCHAKVXXXXXVXpXXq6xXFXXXa/2019-Charcoal-Mens-Tuxedo-Jacket-Groom-Tuxedos-Wedding-Tuxedos-Suits-Prom-Suits-Best-Men-Suit-Jacket.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://ae01.alicdn.com/kf/HTB1PCHAKVXXXXXVXpXXq6xXFXXXa/2019-Charcoal-Mens-Tuxedo-Jacket-Groom-Tuxedos-Wedding-Tuxedos-Suits-Prom-Suits-Best-Men-Suit-Jacket.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://i.pinimg.com/originals/b8/82/9d/b8829dd99936f083a7bbbea7c52c07ec.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover.jpg">
-      <img src="https://i.pinimg.com/originals/b8/82/9d/b8829dd99936f083a7bbbea7c52c07ec.jpg" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://fashune.com/wp-content/uploads/2018/10/c4b75756-2f7a-4c48-a7de-8213c51ae2fa.jpg" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://fashune.com/wp-content/uploads/2018/10/c4b75756-2f7a-4c48-a7de-8213c51ae2fa.jpg" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-    <div 
-      class="card block bg-white shadow-lg rounded-lg overflow-hidden transform transition hover:scale-105 cursor-pointer"
-      data-id="1"
-      data-title="Dorothy Overlapped Mini Dress - Navy Blue"
-      data-price="5900"
-      data-color="Navy Blue"
-      data-sizes="UK8,UK10,UK12,UK14,UK16"
-      data-image="https://i.pinimg.com/originals/81/a7/f1/81a7f1c29489ce4bb106fbc96ed5228a.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover">
-      <img src="https://i.pinimg.com/originals/81/a7/f1/81a7f1c29489ce4bb106fbc96ed5228a.jpg" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" alt="Product" class="w-full h-64 object-cover" 
-           alt="Product 1" class="w-full h-64 object-cover">
-      <div class="p-4">
-        <h3 class="text-lg font-bold text-gray-800">Dorothy Overlapped Mini Dress</h3>
-        <p class="text-sm text-gray-500">Navy Blue</p>
-        <div class="mt-2 text-lg text-gray-800 font-semibold">Rs. 5,900</div>
-      </div>
-    </div>
-
-
-  <script>
+<script>
     // JavaScript to handle product card clicks
     const productCards = document.querySelectorAll('.card');
     productCards.forEach(card => {
