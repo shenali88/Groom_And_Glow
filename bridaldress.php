@@ -10,7 +10,6 @@ $result = $conn->query($sql);
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add_to_cart') {
     $response = ['success' => false, 'message' => ''];
 
-    // Check if user is logged in
     if (!isset($_SESSION['user_id'])) {
         $response['message'] = 'Please login first';
         echo json_encode($response);
@@ -23,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $quantity = $_POST['quantity'];
         $size = $_POST['size'];
 
-        // Check if the user is a registered customer
+        // Check if the user is a customer
         $check_customer = $conn->prepare("SELECT role FROM register WHERE id = ? AND role = 'customer'");
         $check_customer->bind_param("i", $customer_id);
         $check_customer->execute();
@@ -35,26 +34,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             exit;
         }
 
-        // Get the original item details
+        // Get item details
         $stmt = $conn->prepare("SELECT item_name, price FROM supplied_items WHERE item_id = ?");
         $stmt->bind_param("i", $item_id);
         $stmt->execute();
         $item = $stmt->get_result()->fetch_assoc();
 
         if ($item) {
-            // Calculate total amount
-            $total_amount = $item['price'] * $quantity;
-
-            // Insert into customer_item table
-            $insert_sql = "INSERT INTO customer_item (item_id, customer_id, item_name, quantity, price) 
-                           VALUES (?, ?, ?, ?, ?)";
+            // Insert into customer_item
+            $insert_sql = "INSERT INTO customer_item (item_id, customer_id, item_name, quantity, price, size) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($insert_sql);
-            $stmt->bind_param("iisid", 
+            $stmt->bind_param("iisids", 
                 $item_id, 
                 $customer_id, 
                 $item['item_name'], 
                 $quantity, 
-                $item['price']
+                $item['price'],
+                $size
             );
 
             if ($stmt->execute()) {
@@ -67,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $response['message'] = 'Item not found';
         }
     } catch (Exception $e) {
-        $response['message'] = 'An error occurred';
+        $response['message'] = 'An error occurred: ' . $e->getMessage();
     }
 
     echo json_encode($response);
@@ -137,55 +133,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     </div>
 
     <script>
-    function addToCart(button) {
-        const card = button.closest('.bg-white');
-        const itemId = button.getAttribute('data-item-id');
-        const quantity = card.querySelector('.quantity-input').value;
-        const size = card.querySelector('.size-select').value;
+function addToCart(button) {
+    const card = button.closest('.bg-white');
+    const itemId = button.getAttribute('data-item-id');
+    const quantity = card.querySelector('.quantity-input').value;
+    const size = card.querySelector('.size-select').value;
 
-        // Create form data
-        const formData = new FormData();
-        formData.append('action', 'add_to_cart');
-        formData.append('item_id', itemId);
-        formData.append('quantity', quantity);
-        formData.append('size', size);
+    // Create form data
+    const formData = new FormData();
+    formData.append('action', 'add_to_cart');
+    formData.append('item_id', itemId);
+    formData.append('quantity', quantity);
+    formData.append('size', size);
 
-        // Send AJAX request
-        fetch(window.location.href, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert(data.message);
-                // Update cart count if you have one
-                updateCartCount();
+    // Send AJAX request
+    fetch('bridaldress.php', { // Make sure to send the request to the correct PHP page
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            window.location.href = 'addtocart.php'; // Navigate after successful addition
+        } else {
+            if (data.message === 'Please login first') {
+                window.location.href = 'signin.php'; // Redirect to login if not authenticated
             } else {
-                if (data.message === 'Please login first') {
-                    window.location.href = 'singin.php';
-                } else {
-                    alert(data.message);
-                }
+                alert(data.message);
             }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred. Please try again.');
-        });
-    }
-
-    function updateCartCount() {
-        const cartCount = document.getElementById('cart-count');
-        if (cartCount) {
-            // Remove 'hidden' class to show the count
-            cartCount.classList.remove('hidden');
-            
-            // Get current count and increment
-            let currentCount = parseInt(cartCount.textContent) || 0;
-            cartCount.textContent = currentCount + 1;
         }
-    }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred. Please try again.');
+    });
+}
     </script>
 </body>
 </html>
