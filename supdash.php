@@ -1,8 +1,16 @@
 <?php
 include 'connection.php';
+session_start();
 
-// Check if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'supplier') {
+    die("Access denied. Only registered suppliers can add items.");
+}
+
+$supplier_id = $_SESSION['user_id']; // Use the logged-in supplier's ID 
+
+
+// Check if form is submitted for adding new item
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['item_name'])) {
     // Get form values
     $item_name = $_POST['item_name'];
     $date = $_POST['date'];
@@ -12,14 +20,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sizes = $_POST['sizes'];
     $image_url = $_POST['image_url'];
     $total_amount = $_POST['total_amount'];
-    $category = $_POST['category']; // New category field
+    $category = $_POST['category'];
 
     // Get the supplier_id from the register table where role is 'supplier'
-    $supplier_id_query = "SELECT id FROM register WHERE role = 'supplier' LIMIT 1"; // Adjust as needed
+    $supplier_id_query = "SELECT id FROM register WHERE role = 'supplier' LIMIT 1";
     $result = $conn->query($supplier_id_query);
 
     if ($result->num_rows > 0) {
-        $supplier_id = $result->fetch_assoc()['id']; // Fetch supplier_id from the result
+        $supplier_id = $result->fetch_assoc()['id'];
     } else {
         die("No supplier found in the register table.");
     }
@@ -31,11 +39,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($conn->query($insert_query) === TRUE) {
         echo "<script>alert('New record created successfully');</script>";
     } else {
-        echo "<script>alert('Error: " . $insert_query . "<br>" . $conn->error . "');</script>";
+        echo "<script>alert('Error: " . $conn->error . "');</script>";
     }
 }
 
-$conn->close();
+// Initialize variables
+$result = null;
+$display_table = false;
+
+// Handle search and view all functionality
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (isset($_POST['view_all'])) {
+        $query = "SELECT * FROM supplied_items WHERE payment_status = 'Paid'";
+        $result = $conn->query($query);
+        $display_table = true;
+    } elseif (isset($_POST['search_id']) && !empty($_POST['search_id'])) {
+        $search_id = $conn->real_escape_string($_POST['search_id']);
+        $query = "SELECT * FROM supplied_items WHERE payment_status = 'Paid' AND item_id = '$search_id'";
+        $result = $conn->query($query);
+        $display_table = true;
+    }
+}
 ?>
 
 
@@ -145,91 +169,78 @@ $conn->close();
     </form>
 </div>
 
-<!-- Supplied Items Details -->
+<!-- Payment Successful Stocks -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
-    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Payement Successfull Stocks</h2>
-    <div class="flex items-center space-x-4 mb-6">
-        <input type="text" placeholder="Enter Item ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-    </div>
+    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Payment Successful Stocks</h2>
+    <form method="POST" class="flex items-center space-x-4 mb-6">
+        <input type="text" name="search_id" placeholder="Enter Item ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <button type="submit" name="search" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
+        <button type="submit" name="view_all" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+    </form>
+    
+    <?php if ($display_table): ?>
     <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-        <tr>
-           <th class="px-6 py-4 border">Supplier ID</th>
-            <th class="px-6 py-4 border">Item ID</th>
-            <th class="px-6 py-4 border">Item Name</th>
-            <th class="px-6 py-4 border">Date</th>
-            <th class="px-6 py-4 border">Quantity</th>
-            <th class="px-6 py-4 border">Price</th>
-            <th class="px-6 py-4 border">Total Amount</th>
-            <th class="px-6 py-4 border">Payment Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S001</td> 
-            <td class="px-6 py-4 border">I001</td>
-            <td class="px-6 py-4 border">Wedding Dress</td>
-            <td class="px-6 py-4 border">2025-01-10</td>
-            <td class="px-6 py-4 border">1</td>
-            <td class="px-6 py-4 border">$500</td>
-            <td class="px-6 py-4 border">$500</td>
-            <td class="px-6 py-4 border text-center text-green-600 font-semibold">Successful</td>
-        </tr>
-    </tbody>
-</table>
+        <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+            <tr>
+                <th class="px-6 py-4 border">Item ID</th>
+                <th class="px-6 py-4 border">Supplier ID</th>
+                <th class="px-6 py-4 border">Item Name</th>
+                <th class="px-6 py-4 border">Date</th>
+                <th class="px-6 py-4 border">Quantity</th>
+                <th class="px-6 py-4 border">Price</th>
+                <th class="px-6 py-4 border">Colour</th>
+                <th class="px-6 py-4 border">Sizes</th>
+                <th class="px-6 py-4 border">Image</th>
+                <th class="px-6 py-4 border">Total Amount</th>
+                <th class="px-6 py-4 border">Category</th>
+                <th class="px-6 py-4 border">Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>";
+                    echo "<td class='border px-6 py-4'>" . $row["item_id"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["supplier_id"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["item_name"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["date"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["quantity"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["price"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["color"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["sizes"] . "</td>";
+                    echo "<td class='border px-6 py-4'><img src='" . $row["image_url"] . "' alt='Item Image' class='h-16 w-16'></td>";
+                    echo "<td class='border px-6 py-4'>" . $row["total_amount"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["category"] . "</td>";
+                    echo "<td class='border px-6 py-4'>" . $row["payment_status"] . "</td>";
+                    echo "</tr>";
+                }
+            } else {
+                echo "<tr><td colspan='12' class='text-center text-red-500 py-4'>No records found.</td></tr>";
+            }
+            ?>
+        </tbody>
+    </table>
+    <?php endif; ?>
+</div>
+
+
+ 
+<div class="bg-white shadow-2xl rounded-lg p-6">
+    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Requested Items</h2>
+    <form method="POST" class="flex items-center space-x-4 mb-6">
+        <a href="requesteditem.php" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">
+            Go to Requested Items
+        </a>
+    </form>
 </div>
 
 
 
 
 
-     <!-- Out of Stock -->
-<div class="bg-white shadow-2xl rounded-lg p-6">
-    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Wanted Items</h2>
-   
-    <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-        <tr>
-            <th class="px-6 py-4 border">Supplier ID</th>
-            <th class="px-6 py-4 border">Item Name</th>
-            <th class="px-6 py-4 border">Quantity</th>
-            <th class="px-6 py-4 border">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S001</td>
-            <td class="px-6 py-4 border">Wedding Dress</td>
-            <td class="px-6 py-4 border">15</td>
-            <td class="px-6 py-4 border text-center">
-                <div class="flex flex-col items-center">
-                    <!-- Radio Buttons -->
-                    <div class="mb-2">
-                        <label class="mr-4">
-                            <input type="radio" name="action-S001" value="Confirm" class="w-5 h-5 text-green-600 focus:ring-2 focus:ring-green-500">
-                            Confirm
-                        </label>
-                        <label>
-                            <input type="radio" name="action-S001" value="Cancel" class="w-5 h-5 text-red-600 focus:ring-2 focus:ring-red-500">
-                            Cancel
-                        </label>
-                    </div>
-                    <!-- Send Button -->
-                    <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-blue-500">
-                        Send
-                    </button>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
 
-</body>
 <script>
-
 document.addEventListener("DOMContentLoaded", function () {
     const clearBtn = document.querySelector("button:nth-of-type(4)"); // Select the "Clear" button
     const addRowBtn = document.querySelector("button:nth-of-type(3)"); // Select the "Add Row" button
@@ -276,8 +287,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     </script>
-
+</body>
 
 </html>
-
-
+<?php
+$conn->close();
+?>

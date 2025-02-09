@@ -65,6 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
     exit();
 }
 
+
 ?>
 
 <!DOCTYPE html>
@@ -142,20 +143,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remove_item'])) {
 
         <!-- Buttons for Continue Shopping & Empty Cart -->
         <div class="mt-6 flex justify-between">
-        <a href="index.php" class="px-6 py-3 bg-gray-600 text-white text-lg font-semibold rounded-lg hover:bg-gray-800 transition">
+        <a href="bridaldress.php" class="px-6 py-3 bg-gray-600 text-white text-lg font-semibold rounded-lg hover:bg-gray-800 transition">
     ⬅️ Continue Shopping
 </a>
-            <form action="clear_cart.php" method="POST">
-                <button type="submit" class="px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg hover:bg-red-800 transition">
-                    🗑️ Empty Cart
-                </button>
-            </form>
+<form action="clear_cart.php" method="POST" onsubmit="return confirm('Are you sure you want to empty your cart?');">
+    <button type="submit" class="px-6 py-3 bg-red-600 text-white text-lg font-semibold rounded-lg hover:bg-red-800 transition">
+        🗑️ Empty Cart
+    </button>
+</form>
         </div>
 
         <?php else: ?>
         <p class="text-gray-700 text-xl text-center">Your cart is empty. 🛒</p>
         <div class="text-center mt-4">
-            <a href="shop.php" class="px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition">
+            <a href="bridaldress.php" class="px-6 py-3 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-700 transition">
                 Start Shopping 🛍️
             </a>
         </div>

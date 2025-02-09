@@ -41,10 +41,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bind_param("issssss", $customer_id, $first_name, $last_name, $address, $phone, $email, $payment_method);
 
     if ($stmt->execute()) {
-        // Redirect to index.php after successful insertion
-        header("Location: index.php");
-        exit; // Prevent further execution
+        echo "<script>
+            alert('Thank you for shopping! 🛒');
+            window.location.href = 'index.php';
+        </script>";
+        exit;
     }
+
 
 }
 

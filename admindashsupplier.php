@@ -1,9 +1,31 @@
+<?php
+include 'connection.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_status'])) {
+    $item_id = $_POST['item_id'];
+    $payment_status = $_POST['payment_status'];
+
+    $sql = "UPDATE supplied_items SET payment_status = ? WHERE item_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("si", $payment_status, $item_id);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Payment status updated successfully!'); window.location.href='admindashsupplier.php';</script>";
+    } else {
+        echo "<script>alert('Error updating payment status!');</script>";
+    }
+
+    $stmt->close();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Customer Details</title>
+    <title>Admin Dashboard - supplier Details</title>
     <!-- Tailwind CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -96,201 +118,280 @@
     <main class="flex-1 p-6 space-y-8">
 
    
-        <!-- Supplier Personal Details -->
+<?php
+include 'connection.php'; 
+
+// Variable to store results
+$result = null;
+
+// Handle search request
+if (isset($_POST['search'])) {
+    if (!empty($_POST['supplier_id'])) {
+        $supplier_id = $_POST['supplier_id'];
+
+        // Prepare and execute query
+        $sql = "SELECT id, first_name, last_name, email, mobile_number FROM register WHERE role = 'supplier' AND id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $supplier_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    }
+}
+
+// Handle view all request
+if (isset($_POST['view_all'])) {
+    $sql = "SELECT id, first_name, last_name, email, mobile_number FROM register WHERE role = 'supplier'";
+    $result = $conn->query($sql);
+}
+?>
+
+<!-- Supplier Personal Details -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Supplier Personal Details</h2>
-    <div class="flex items-center space-x-4 mb-6">
-        <input type="text" placeholder="Enter Supplier ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-    </div>
+
+    <!-- Form for Search by ID -->
+    <form method="POST" action="">
+        <div class="flex items-center space-x-4 mb-6">
+            <input type="text" name="supplier_id" value="<?php if(isset($_POST['supplier_id']) && !isset($_POST['clear'])) echo htmlspecialchars($_POST['supplier_id']); ?>" placeholder="Enter Supplier ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" name="search" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
+            <button type="submit" name="clear" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
+            <button type="submit" name="view_all" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+        </div>
+    </form>
+
+    <!-- Table to display the results -->
     <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+        <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
             <tr>
                 <th class="px-6 py-4 border">Supplier ID</th>
                 <th class="px-6 py-4 border">First Name</th>
                 <th class="px-6 py-4 border">Last Name</th>
                 <th class="px-6 py-4 border">Email</th>
                 <th class="px-6 py-4 border">Mobile Number</th>
-                <th class="px-6 py-4 border">Supply Item</th>
-
             </tr>
         </thead>
         <tbody>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">S001</td>
-                <td class="px-6 py-4 border">Michael</td>
-                <td class="px-6 py-4 border">Brown</td>
-                <td class="px-6 py-4 border">michael.brown@supplyco.com</td>
-                <td class="px-6 py-4 border">+1234567001</td>
-                <td class="px-6 py-4 border">Wedding Dress</td>
-
-            </tr>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">S002</td>
-                <td class="px-6 py-4 border">Olivia</td>
-                <td class="px-6 py-4 border">Davis</td>
-                <td class="px-6 py-4 border">olivia.davis@supplyco.com</td>
-                <td class="px-6 py-4 border">+1234567002</td>
-                <td class="px-6 py-4 border">Bouquets</td>
-            </tr>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">S003</td>
-                <td class="px-6 py-4 border">Liam</td>
-                <td class="px-6 py-4 border">Johnson</td>
-                <td class="px-6 py-4 border">liam.johnson@supplyco.com</td>
-                <td class="px-6 py-4 border">+1234567003</td>
-                <td class="px-6 py-4 border">Jewelry Sets</td>
-
-            </tr>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">S004</td>
-                <td class="px-6 py-4 border">Sophia</td>
-                <td class="px-6 py-4 border">Wilson</td>
-                <td class="px-6 py-4 border">sophia.wilson@supplyco.com</td>
-                <td class="px-6 py-4 border">+1234567004</td>
-                <td class="px-6 py-4 border">Party Dress</td>
-                
-            </tr>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">S005</td>
-                <td class="px-6 py-4 border">Ethan</td>
-                <td class="px-6 py-4 border">Martinez</td>
-                <td class="px-6 py-4 border">ethan.martinez@supplyco.com</td>
-                <td class="px-6 py-4 border">+1234567005</td>
-                <td class="px-6 py-4 border">Gromm Suits</td>
-            </tr>
+            <?php
+            if ($result && $result->num_rows > 0) {
+                while ($row = $result->fetch_assoc()) {
+                    echo "<tr>
+                            <td class='px-6 py-4 border'>" . htmlspecialchars($row["id"]) . "</td>
+                            <td class='px-6 py-4 border'>" . htmlspecialchars($row["first_name"]) . "</td>
+                            <td class='px-6 py-4 border'>" . htmlspecialchars($row["last_name"]) . "</td>
+                            <td class='px-6 py-4 border'>" . htmlspecialchars($row["email"]) . "</td>
+                            <td class='px-6 py-4 border'>" . htmlspecialchars($row["mobile_number"]) . "</td>
+                          </tr>";
+                }
+            } else {
+               
+            }
+            ?>
         </tbody>
     </table>
 </div>
 
+
+
+
 <!-- Supplied Items Details -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Supplied Items Details</h2>
-    <div class="flex items-center space-x-4 mb-6">
-        <input type="text" placeholder="Enter Supplier ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-    </div>
-    <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-        <tr>
-            <th class="px-6 py-4 border">Supplier ID</th>
-            <th class="px-6 py-4 border">Item ID</th>
-            <th class="px-6 py-4 border">Item Name</th>
-            <th class="px-6 py-4 border">Date</th>
-            <th class="px-6 py-4 border">Quantity</th>
-            <th class="px-6 py-4 border">Price</th>
-            <th class="px-6 py-4 border">Total Amount</th>
-            <th class="px-6 py-4 border">Payment Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S001</td>
-            <td class="px-6 py-4 border">I001</td>
-            <td class="px-6 py-4 border">Wedding Dress</td>
-            <td class="px-6 py-4 border">2025-01-10</td>
-            <td class="px-6 py-4 border">1</td>
-            <td class="px-6 py-4 border">$500</td>
-            <td class="px-6 py-4 border">$500</td>
-            <td class="px-6 py-4 border text-center">
-                <div class="flex items-center justify-center space-x-2">
-                    <input type="checkbox" class="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-blue-500" title="Mark as Paid">
-                    <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yello-600 focus:ring-2 focus:ring-blue-500">
-                        Send
-                    </button>
-                </div>
-            </td>
-        </tr>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S002</td>
-            <td class="px-6 py-4 border">I002</td>
-            <td class="px-6 py-4 border">Bouquet</td>
-            <td class="px-6 py-4 border">2025-01-11</td>
-            <td class="px-6 py-4 border">2</td>
-            <td class="px-6 py-4 border">$80</td>
-            <td class="px-6 py-4 border">$160</td>
-            <td class="px-6 py-4 border text-center">
-                <div class="flex items-center justify-center space-x-2">
-                    <input type="checkbox" class="w-5 h-5 text-yellow-600 focus:ring-2 focus:ring-blue-500" title="Mark as Paid">
-                    <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-blue-500">
-                        Send
-                    </button>
-                </div>
-            </td>
-        </tr>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S003</td>
-            <td class="px-6 py-4 border">I003</td>
-            <td class="px-6 py-4 border">Jewelry Set</td>
-            <td class="px-6 py-4 border">2025-01-12</td>
-            <td class="px-6 py-4 border">1</td>
-            <td class="px-6 py-4 border">$300</td>
-            <td class="px-6 py-4 border">$300</td>
-            <td class="px-6 py-4 border text-center">
-                <div class="flex items-center justify-center space-x-2">
-                    <input type="checkbox" class="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-yellow-500" title="Mark as Paid">
-                    <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-blue-500">
-                        Send
-                    </button>
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
-</div>
-
-
-     <!-- Out of Stock -->
-<div class="bg-white shadow-2xl rounded-lg p-6">
-    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Wanted Items From Supplier</h2>
+    
+    <form method="POST" action="">
+        <div class="flex items-center space-x-4 mb-6">
+            
+            <input type="date" name="search_date" value="<?php if(isset($_POST['search_date']) && !isset($_POST['clear'])) echo $_POST['search_date']; ?>" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button type="submit" name="search" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by Date</button>
+            <button type="submit" name="clear" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
+            <button type="submit" name="view_all" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+        </div>
+    </form>
     
     <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-        <tr>
-            <th class="px-6 py-4 border">Supplier ID</th>
-            <th class="px-6 py-4 border">Item Name</th>
-            <th class="px-6 py-4 border">Quantity</th>
-            <th class="px-6 py-4 border">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S001</td>
-            <td class="px-6 py-4 border">Wedding Dress</td>
-            <td class="px-6 py-4 border">15</td>
-            <td class="px-6 py-4 border text-center">
-                <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-blue-500">
-                    Send
-                </button>
-            </td>
-        </tr>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S002</td>
-            <td class="px-6 py-4 border">Jewelry Set</td>
-            <td class="px-6 py-4 border">20</td>
-            <td class="px-6 py-4 border text-center">
-                <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-blue-500">
-                    Send
-                </button>
-            </td>
-        </tr>
-        <tr class="hover:bg-teal-100">
-            <td class="px-6 py-4 border">S003</td>
-            <td class="px-6 py-4 border">Flower Bouquet</td>
-            <td class="px-6 py-4 border">20</td>
-            <td class="px-6 py-4 border text-center">
-                <button class="px-4 py-2 text-white bg-yellow-600 rounded hover:bg-yellow-600 focus:ring-2 focus:ring-blue-500">
-                    Send
-                </button>
-            </td>
-        </tr>
-    </tbody>
-</table>
+        <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+            <tr>
+                <th class="px-6 py-4 border">Item ID</th>
+                <th class="px-6 py-4 border">Supplier ID</th>
+                <th class="px-6 py-4 border">Item Name</th>
+                <th class="px-6 py-4 border">Date</th>
+                <th class="px-6 py-4 border">Quantity</th>
+                <th class="px-6 py-4 border">Price</th>
+                <th class="px-6 py-4 border">Colour</th>
+                <th class="px-6 py-4 border">Sizes</th>
+                <th class="px-6 py-4 border">Image URL</th>
+                <th class="px-6 py-4 border">Total Amount</th>
+                <th class="px-6 py-4 border">Category</th>
+                <th class="px-6 py-4 border">Payment Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            if (isset($_POST['clear'])) {
+                $sql = null;
+            }
+            elseif (isset($_POST['view_all'])) {
+                $sql = "SELECT * FROM supplied_items";
+            }
+            elseif (isset($_POST['search'])) {
+                if (!empty($_POST['supplier_id'])) {
+                    $supplier_id = $_POST['supplier_id'];
+                    $sql = "SELECT * FROM supplied_items WHERE supplier_id = ?";
+                } elseif (!empty($_POST['search_date'])) {
+                    $search_date = $_POST['search_date'];
+                    $sql = "SELECT * FROM supplied_items WHERE date = ?";
+                }
+            }
+            
+            if (isset($sql)) {
+                if (isset($stmt)) {
+                    $stmt->close();
+                }
+                $stmt = $conn->prepare($sql);
+                if (isset($supplier_id)) {
+                    $stmt->bind_param("i", $supplier_id);
+                } elseif (isset($search_date)) {
+                    $stmt->bind_param("s", $search_date);
+                }
+                $stmt->execute();
+                $result = $stmt->get_result();
+                
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<tr>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["item_id"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["supplier_id"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["item_name"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["date"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["quantity"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["price"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["color"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["sizes"]) . "</td>
+                                <td class='border px-6 py-4'><img src='" . $row["image_url"] . "' alt='Item Image' class='h-16 w-16'></td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["total_amount"]) . "</td>
+                                <td class='px-6 py-4 border'>" . htmlspecialchars($row["category"]) . "</td>
+                                <td class='px-6 py-4 border'>
+                                    <form method='POST' action='admindashsupplier.php'>
+                                        <input type='hidden' name='item_id' value='" . $row['item_id'] . "'>
+                                        <select name='payment_status' class='px-2 py-1 border rounded'>
+                                            <option value='Paid' " . ($row['payment_status'] == 'Paid' ? 'selected' : '') . ">Paid</option>
+                                            <option value='Pending' " . ($row['payment_status'] == 'Pending' ? 'selected' : '') . ">Pending</option>
+                                        </select>
+                                        <button type='submit' name='update_status' class='bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700 transition-all duration-300 ease-in-out'>Send</button>
+                                    </form>
+                                </td>
+                              </tr>";
+                    }
+                } else {
+                    echo "<tr><td colspan='12' class='px-6 py-4 border text-center'>No records found</td></tr>";
+                }
+            }
+            $conn->close();
+            ?>
+        </tbody>
+    </table>
 </div>
 
-     <!-- Out of Stock -->
+<script>
+document.getElementById("viewAllBtn").addEventListener("click", function () {
+    fetch("fetch_supplied_items.php")
+        .then(response => response.json())
+        .then(data => {
+            let tableBody = document.getElementById("tableBody");
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            data.forEach(item => {
+                let row = `<tr>
+                    <td class="border px-6 py-4">${item.item_id}</td>
+                    <td class="border px-6 py-4">${item.supplier_id}</td>
+                    <td class="border px-6 py-4">${item.item_name}</td>
+                    <td class="border px-6 py-4">${item.date}</td>
+                    <td class="border px-6 py-4">${item.quantity}</td>
+                    <td class="border px-6 py-4">${item.price}</td>
+                    <td class="border px-6 py-4">${item.color}</td>
+                    <td class="border px-6 py-4">${item.sizes}</td>
+                    <td class="border px-6 py-4"><a href="${item.image_url}" target="_blank">View Image</a></td>
+                    <td class="border px-6 py-4">${item.total_amount}</td>
+                    <td class="border px-6 py-4">${item.category}</td>
+                    
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+        })
+        .catch(error => console.error("Error fetching data:", error));
+});
+</script>
+
+
+
+<!-- Out of Stock insert  Wanted Items From Supplier -->
+ <!--PHP code in other page the page name is insertwanteditems.php-->
+
+ <div class="bg-white shadow-2xl rounded-lg p-6">
+    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Wanted Items From Supplier</h2>
+    <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Add Row</button>
+    <form action="insertwanteditems.php" method="POST">
+        <table class="min-w-full table-auto border-collapse border border-gray-300">
+        <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+    <tr>
+        <th class="px-6 py-4 border">Supplier ID</th>
+        <th class="px-6 py-4 border">Item Name</th>
+        <th class="px-6 py-4 border">Colour</th>
+        <th class="px-6 py-4 border">Size</th>
+        <th class="px-6 py-4 border">Quantity</th>
+        <th class="px-6 py-4 border">Date</th> <!-- New Date Column -->
+        <th class="px-6 py-4 border">Action</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td class="px-6 py-4 border">
+            <input type="text" name="supplier_id" class="w-full px-2 py-1 border rounded-lg focus:outline-none focus:ring focus:border-yellow-500" required>
+        </td>
+        <td class="px-6 py-4 border">
+            <select name="item_name" class="w-full px-2 py-1 border rounded-lg focus:outline-none focus:ring focus:border-yellow-500" required>
+                <option value="Bridal Dress">Bridal Dress</option>
+                <option value="Party Wear">Party Wear</option>
+                <option value="Groom Suit">Groom Suit</option>
+                <option value="Jewelry">Jewelry</option>
+                <option value="Flower Bouquet">Flower Bouquet</option>
+            </select>
+        </td>
+        <td class="px-6 py-4 border">
+            <input type="text" name="color" class="w-full px-2 py-1 border rounded-lg focus:outline-none focus:ring focus:border-yellow-500" required>
+        </td>
+        <td class="px-6 py-4 border">
+            <select name="size[]" multiple class="w-full px-2 py-1 border rounded-lg focus:outline-none focus:ring focus:border-yellow-500" required>
+                <option value="Small">Small</option>
+                <option value="Medium">Medium</option>
+                <option value="Large">Large</option>
+                <option value="Extra Large">Extra Large</option>
+            </select>
+        </td>
+        <td class="px-6 py-4 border">
+            <input type="number" name="quantity" class="w-full px-2 py-1 border rounded-lg focus:outline-none focus:ring focus:border-yellow-500" required>
+        </td>
+        <td class="px-6 py-4 border">
+            <input type="date" name="date_requested" class="w-full px-2 py-1 border rounded-lg focus:outline-none focus:ring focus:border-yellow-500" required>
+        </td>
+        <td class="px-6 py-4 border text-center">
+            <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition">
+                Send
+            </button>
+        </td>
+    </tr>
+</tbody>
+
+        </table>
+    </form>
+</div>
+
+
+
+
+
+
+
+     <!-- Out of Stock Confirmed Items-->
      <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Confirmed Items</h2>
     <div class="flex items-center space-x-4 mb-6">
