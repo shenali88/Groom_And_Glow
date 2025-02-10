@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } elseif ($user['role'] == 'tailor') {
                 $response['redirect'] = 'tailordashboard.php';
             }elseif ($user['role'] == 'admin') {
-                $response['redirect'] = 'tailordashboard.php';
+                $response['redirect'] = 'admindashboard.php';
             }
 
             $response['success'] = true;

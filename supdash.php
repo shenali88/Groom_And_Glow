@@ -173,59 +173,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Payment Successful Stocks</h2>
     <form method="POST" class="flex items-center space-x-4 mb-6">
-        <input type="text" name="search_id" placeholder="Enter Item ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button type="submit" name="search" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-        <button type="submit" name="view_all" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+        <a href="paymentsuccessfulstock.php" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">
+            Go to Successful Stocks
+        </a>
     </form>
+
     
-    <?php if ($display_table): ?>
-    <table class="min-w-full table-auto border-collapse border border-gray-300">
-        <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-            <tr>
-                <th class="px-6 py-4 border">Item ID</th>
-                <th class="px-6 py-4 border">Supplier ID</th>
-                <th class="px-6 py-4 border">Item Name</th>
-                <th class="px-6 py-4 border">Date</th>
-                <th class="px-6 py-4 border">Quantity</th>
-                <th class="px-6 py-4 border">Price</th>
-                <th class="px-6 py-4 border">Colour</th>
-                <th class="px-6 py-4 border">Sizes</th>
-                <th class="px-6 py-4 border">Image</th>
-                <th class="px-6 py-4 border">Total Amount</th>
-                <th class="px-6 py-4 border">Category</th>
-                <th class="px-6 py-4 border">Payment Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if ($result && $result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td class='border px-6 py-4'>" . $row["item_id"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["supplier_id"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["item_name"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["date"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["quantity"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["price"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["color"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["sizes"] . "</td>";
-                    echo "<td class='border px-6 py-4'><img src='" . $row["image_url"] . "' alt='Item Image' class='h-16 w-16'></td>";
-                    echo "<td class='border px-6 py-4'>" . $row["total_amount"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["category"] . "</td>";
-                    echo "<td class='border px-6 py-4'>" . $row["payment_status"] . "</td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='12' class='text-center text-red-500 py-4'>No records found.</td></tr>";
-            }
-            ?>
-        </tbody>
-    </table>
-    <?php endif; ?>
 </div>
+    
+    
 
 
  
+
+<!-- Requested Items -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Requested Items</h2>
     <form method="POST" class="flex items-center space-x-4 mb-6">

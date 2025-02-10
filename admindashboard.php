@@ -1,3 +1,63 @@
+<?php
+session_start();
+$servername = "localhost";
+$username = "root";
+$password = "shenu";
+$dbname = "groom&glow";
+
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    die("Access denied. Please log in.");
+}
+
+$user_id = $_SESSION['user_id'];
+
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Admin details
+$first_name = "shenali";
+$last_name = "imalsha";
+$email = "shenali@gmail.com"; // Change to your actual admin email
+$mobile_number = "0772026191"; // Change to a valid mobile number
+$role = "admin";
+$plain_password = "shenali@123"; // Change to a strong password
+
+// Hash the password securely
+$hashed_password = password_hash($plain_password, PASSWORD_DEFAULT);
+
+// Check if admin already exists
+$sql_check = "SELECT id FROM register WHERE email = ?";
+$stmt_check = $conn->prepare($sql_check);
+$stmt_check->bind_param("s", $email);
+$stmt_check->execute();
+$stmt_check->store_result();
+
+if ($stmt_check->num_rows > 0) {
+    echo ".";
+} else {
+    // Insert the admin user
+    $sql_insert = "INSERT INTO register (first_name, last_name, email, mobile_number, role, password) VALUES (?, ?, ?, ?, ?, ?)";
+    $stmt_insert = $conn->prepare($sql_insert);
+    $stmt_insert->bind_param("ssssss", $first_name, $last_name, $email, $mobile_number, $role, $hashed_password);
+
+    if ($stmt_insert->execute()) {
+        echo "Admin user added successfully.";
+    } else {
+        echo "Error: " . $stmt_insert->error;
+    }
+
+    $stmt_insert->close();
+}
+
+$stmt_check->close();
+$conn->close();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

@@ -179,27 +179,30 @@
 </div>
 
 
-        <!-- Customer Item Details -->
-        <div class="bg-white shadow-2xl rounded-lg p-6">
-            <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Item Details</h2>
-            <div class="flex items-center space-x-4 mb-6">
-          <input type="text" placeholder="Enter Customer ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-          <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-        </div>
-            <table class="min-w-full table-auto border-collapse border border-gray-300">
-            <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-                    <tr>
-                        <th class="px-6 py-4 border">Item ID</th>
-                        <th class="px-6 py-4 border">Customer ID</th>
-                        <th class="px-6 py-4 border">Item Name</th>
-                        <th class="px-6 py-4 border">Quantity</th>
-                        <th class="px-6 py-4 border">Price</th>
-                    </tr>
-                </thead>
-                
-            </table>
-        </div>
+<!-- Customer Item Details -->
+<div class="bg-white shadow-2xl rounded-lg p-6">
+    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Item Details</h2>
+    <div class="flex items-center space-x-4 mb-6">
+  <input type="text" placeholder="Enter Date" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+  <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by Date</button>
+  <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
+  <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
+</div>
+    <table class="min-w-full table-auto border-collapse border border-gray-300">
+    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
+            <tr>
+                <th class="px-6 py-4 border">Item ID</th>
+                <th class="px-6 py-4 border">Customer ID</th>
+                <th class="px-6 py-4 border">Item Name</th>
+                <th class="px-6 py-4 border">Quantity</th>
+                <th class="px-6 py-4 border">Size</th>
+                <th class="px-6 py-4 border">Price</th>
+                <th class="px-6 py-4 border">Total Price</th>
+            </tr>
+        </thead>
+        
+    </table>
+</div>
 
 <!-- Customer Appointment Details -->
 <div class="bg-white shadow-2xl rounded-lg p-6">

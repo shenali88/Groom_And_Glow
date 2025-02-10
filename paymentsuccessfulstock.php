@@ -43,6 +43,12 @@ $result = $stmt->get_result();
         <input type="hidden" name="supplier_id" value="<?php echo $user_id; ?>">
         <button type="submit" name="view_all" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
     </form>
+  <br>
+    <form method="POST" class="flex items-center space-x-4 mb-6">
+        <a href="supdash.php" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">
+        Go to Previous Page
+    </a>
+</form>
 
     <table class="min-w-full table-auto border-collapse border border-gray-300">
         <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
