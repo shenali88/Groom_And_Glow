@@ -96,7 +96,7 @@
     <!-- Content -->
     <main class="flex-1 p-6 space-y-8">
 
-<<!-- Customer Personal Details -->
+<!-- Customer Personal Details -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Personal Details</h2>
     
@@ -179,75 +179,26 @@
 </div>
 
 
-<!-- Customer Item Details -->
+<!-- customer items deails -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
-    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Item Details</h2>
-    <div class="flex items-center space-x-4 mb-6">
-  <input type="text" placeholder="Enter Date" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-  <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by Date</button>
-  <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-  <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Clear</button>
+    <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Items </h2>
+    <form method="POST" class="flex items-center space-x-4 mb-6">
+        <a href="customeritemsdetails.php" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">
+            Go to customer Items
+        </a>
+    </form>
 </div>
-    <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-            <tr>
-                <th class="px-6 py-4 border">Item ID</th>
-                <th class="px-6 py-4 border">Customer ID</th>
-                <th class="px-6 py-4 border">Item Name</th>
-                <th class="px-6 py-4 border">Quantity</th>
-                <th class="px-6 py-4 border">Size</th>
-                <th class="px-6 py-4 border">Price</th>
-                <th class="px-6 py-4 border">Total Price</th>
-            </tr>
-        </thead>
-        
-    </table>
-</div>
+
+
 
 <!-- Customer Appointment Details -->
 <div class="bg-white shadow-2xl rounded-lg p-6">
     <h2 class="text-4xl font-semibold text-yellow-600 mb-4 text-center">Customer Appointment Details</h2>
-    <div class="flex items-center space-x-4 mb-6">
-        <input type="text" placeholder="Enter Customer ID" class="px-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">Search by ID</button>
-        <button class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">View All</button>
-    </div>
-    <table class="min-w-full table-auto border-collapse border border-gray-300">
-    <thead class="bg-gradient-to-r from-yellow-500 via-yellow-600 to-yellow-500 text-white">
-            <tr>
-                <th class="px-6 py-4 border">Appointment ID</th>
-                <th class="px-6 py-4 border">Customer ID</th>
-                <th class="px-6 py-4 border">Appointment Date</th>
-                <th class="px-6 py-4 border">Time</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">A001</td>
-                <td class="px-6 py-4 border">C001</td>
-                <td class="px-6 py-4 border">2025-05-15</td>
-                <td class="px-6 py-4 border">10:00 AM</td>
-            
-                    
-                </td>
-            </tr>
-            <tr class="hover:bg-teal-100">
-                <td class="px-6 py-4 border">A002</td>
-                <td class="px-6 py-4 border">C002</td>
-                <td class="px-6 py-4 border">2025-06-05</td>
-                <td class="px-6 py-4 border">2:00 PM</td>
-             
-                    
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <form method="POST" class="flex items-center space-x-4 mb-6">
+        <a href="customer_appointments.php" class="bg-yellow-600 text-white px-6 py-2 rounded-lg hover:bg-yellow-700 transition-all duration-300 ease-in-out">
+            Go to Customer Appointment Details
+        </a>
+    </form>
 </div>
-
-
-
 </body>
-
-
 </html>

@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -108,31 +110,52 @@
     <a href="package.php" class="text-yellow-600 hover:text-yellow-600">Packages</a>
     <a href="contactus.php" class="text-yellow-600 hover:text-yellow-600">Contact</a>
     <a href="about.php" class="text-yellow-600 hover:text-yellow-600">About Us</a>
+    <a href="appoinment.php" class="text-yellow-600 hover:text-yellow-600">Appoinment</a>
 
-    <!-- Login and Shopping Cart Icons -->
-    <div class="flex space-x-6 items-center">
-            <!-- Login Icon -->
-            <a href="singin.php" class="text-yellow-600 hover:text-yellow-700 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 3c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4z" />
-                </svg>
-              
-            </a>
+   <!-- Login and Shopping Cart Icons -->
+<div class="flex space-x-6 items-center">
+    <!-- Login Icon -->
+    <a href="singin.php" class="text-yellow-600 hover:text-yellow-700 flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 3c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4z" />
+        </svg>
+    </a>
 
-            <!-- Shopping Cart Icon -->
-            <a href="#cart" class="relative">
+   <!-- Shopping Cart Icon with Tooltip -->
+<div class="relative group">
+    <a href="cart.php" class="relative">
         <!-- Cart Icon -->
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="w-8 h-8 text-yellow-600 hover:text-gray-700">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5H2M7 13l-2 8h12l-2-8M7 21a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5H2M7 13l-2 8h12l-2-8M7 21a2 2 0 100-4 2 2 0 000 4zm10 0a2 2 0 100-4 2 2 0 000 4z" />
         </svg>
         <!-- Cart Count Badge -->
         <span id="cart-count" class="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 hidden">0</span>
-      </a>
-</ul>
+    </a>
+    <!-- Tooltip -->
+    <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+        Check your cart
+    </span>
+</div>
+        <!-- Cart Count Badge -->
+        <span id="cart-count" class="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white text-xs font-bold rounded-full px-2 hidden">0</span>
+    </a>
+        <!-- Profile Icon -->
+        <div class="relative group">
+            <a href="cutomerdash.php" class="text-yellow-600 hover:text-gray-700 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 3c-4.418 0-8 1.79-8 4v1h16v-1c0-2.21-3.582-4-8-4z" />
+                </svg>
+            </a>
+            <!-- Tooltip -->
+            <span class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                Check your profile
+            </span>
+</div>
+
 
         </div>
         <form method="post" action="logout.php">
-    <button type="submit" name="logout" class="bg-red-500 text-white text-lg font-semibold py-2 px-4 rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition transform hover:scale-105 active:scale-95">
+    <button type="submit" name="logout" class="bg-yellow-600 text-white text-lg font-semibold py-2 px-4 rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-600 transition transform hover:scale-105 active:scale-95">
         Logout
     </button>
 </form>
