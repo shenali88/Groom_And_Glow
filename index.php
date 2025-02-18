@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -107,7 +105,7 @@
             </ul>
         </div>
     </div>
-    <a href="package.php" class="text-yellow-600 hover:text-yellow-600">Packages</a>
+    <a href="displaypackage.php" class="text-yellow-600 hover:text-yellow-600">Packages</a>
     <a href="contactus.php" class="text-yellow-600 hover:text-yellow-600">Contact</a>
     <a href="about.php" class="text-yellow-600 hover:text-yellow-600">About Us</a>
     <a href="appoinment.php" class="text-yellow-600 hover:text-yellow-600">Appoinment</a>
@@ -162,6 +160,8 @@
 
         
 </header>
+
+
     <script>
         // Dropdown toggle functionality
         const shopButton = document.getElementById('shop-button');
@@ -223,7 +223,7 @@ const allCategoriesButton = document.getElementById('all-categories-button');
     <h2 class="text-4xl font-bold text-yellow-600 mb-6 text-center">Featured Product</h2>
 
    
-        <!-- Product List Section -->
+ <!-- Product List Section -->
   <div id="product-list" class="grid grid-cols-4 gap-6 p-6">
     <!-- Product Card 1 -->
     <div 
@@ -460,15 +460,7 @@ const allCategoriesButton = document.getElementById('all-categories-button');
                     </ul>
                     <p class="text-yellow-600 font-bold">10% Off</p>
                 </div>
-                <div class="bg-white shadow-md rounded p-6">
-                    <h3 class="text-2xl font-bold mb-4">Bride & Groom Combo</h3>
-                    <ul class="text-yellow-600 mb-4">
-                        <li>- Complete bride & groom packages</li>
-                        <li>- Personalized fitting sessions</li>
-                    </ul>
-                    <p class="text-yellow-600 font-bold">25% Off</p>
-                </div>
-            </div>
+                
         </div>
     </section>
 

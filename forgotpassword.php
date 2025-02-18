@@ -218,7 +218,7 @@ window.addEventListener('click', (e) => {
 
       <!-- Additional Links -->
       <div class="mt-6 text-center">
-        <a href="/login" class="text-yellow-600 hover:underline text-sm">
+        <a href="singin.php" class="text-yellow-600 hover:underline text-sm">
           Remember your password? Login here
         </a>
       </div>

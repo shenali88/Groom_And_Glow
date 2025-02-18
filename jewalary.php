@@ -184,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     <a href="package.php" class="text-yellow-600 hover:text-yellow-600">Packages</a>
     <a href="contactus.php" class="text-yellow-600 hover:text-yellow-600">Contact</a>
     <a href="about.php" class="text-yellow-600 hover:text-yellow-600">About Us</a>
+    <a href="appoinment.php" class="text-yellow-600 hover:text-yellow-600">Appoinment</a>
 
     <!-- Login and Shopping Cart Icons -->
     <div class="flex space-x-6 items-center">

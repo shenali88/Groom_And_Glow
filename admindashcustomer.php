@@ -77,6 +77,12 @@
         </a>
       </li>
     </ul>
+    
+    <form method="post" action="logout.php">
+    <button type="submit" name="logout" class="bg-yellow-900 text-white text-lg font-semibold py-2 px-4 rounded-lg hover:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-600 transition transform hover:scale-105 active:scale-95">
+        Logout
+    </button>
+</form>
   </nav>
 </aside>
 

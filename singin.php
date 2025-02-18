@@ -39,6 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
 
+            // Set cookies for 30 days 
+            setcookie('user_email', $user['email'], time() + (86400 * 30), "/");
+            setcookie('user_role', $user['role'], time() + (86400 * 30), "/");
+
             // Redirect based on role
             if ($user['role'] == 'customer') {
                 $response['redirect'] = 'index.php';
@@ -46,8 +50,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $response['redirect'] = 'supdash.php';
             } elseif ($user['role'] == 'tailor') {
                 $response['redirect'] = 'tailordashboard.php';
-            }elseif ($user['role'] == 'admin') {
-                $response['redirect'] = 'admindashboard.php';
+            } elseif ($user['role'] == 'admin') {
+                $response['redirect'] = 'admindashcustomer.php';
             }
 
             $response['success'] = true;
@@ -67,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
