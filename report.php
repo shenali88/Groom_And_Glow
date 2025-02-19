@@ -68,24 +68,7 @@ if (isset($_POST['report'])) {
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
-<header class="bg-cyan-500 text-black shadow-lg py-4 px-6 flex justify-between items-center">
-        
-        <!-- Logo -->
-       <a href="#" class="flex items-center space-x-2">
-         <img src="../images/logo12.png" alt="Logo" class="w-20 h-20">
-       </a>
-       <div class="text-2xl font-bold tracking-wide">
-            Admin Dashboard
-       </div>
-       <!-- Navigation Links -->
-       <nav class="flex space-x-6 text-lg font-semibold">
-           <a href="#" class="hover:text-yellow-400 transition">Dashboard</a>
-           <a href="#" class="hover:text-yellow-400 transition">Orders</a>
-           <a href="#" class="hover:text-yellow-400 transition">Products</a>
-           <a href="#" class="hover:text-yellow-400 transition">Users</a>
-           <a href="#" class="hover:text-yellow-400 transition">Reports</a>
-       </nav>
-   </header>
+
 <body class="bg-gray-100">
 
     <div class="flex items-center justify-center min-h-screen">
@@ -93,7 +76,7 @@ if (isset($_POST['report'])) {
 
 
             <!-- Page Title -->
-            <h2 class="text-center text-2xl font-bold text-gray-800 mb-6">Reports Dashboard</h2>
+            <h2 class="text-center text-2xl font-bold text-yellow-600 mb-6">Generate Reports</h2>
             
             <!-- Report Selection -->
             <div class="mb-4">
@@ -108,12 +91,15 @@ if (isset($_POST['report'])) {
 
             <!-- Report Display Area -->
             <div id="reportContent" class="mt-4 bg-black-100 p-4 rounded-lg shadow-sm min-h-[100px]">
-                <p class="text-gray-600 text-center">Select a report to display data here.</p>
+                <p class="text-yellow-600 text-center">Select a report to display data here.</p>
             </div>
 
-            <!-- Download Button -->
-            <div class="flex justify-center mt-6">
-                <button id="downloadPdf" class="hidden bg-red-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-red-700 transition duration-300">
+            <!-- Buttons: Go Back and Download PDF -->
+            <div class="flex justify-center mt-6 space-x-4">
+                <button id="goBack" class="bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-yellow-700 transition duration-300">
+                    Go Back
+                </button>
+                <button id="downloadPdf" class="hidden bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-yellow-700 transition duration-300">
                     Download PDF
                 </button>
             </div>
@@ -145,6 +131,11 @@ $(document).ready(function(){
     $('#downloadPdf').click(function(){
         var reportType = $(this).attr('data-report');
         window.location.href = 'download_pdf.php?report=' + reportType;
+    });
+    
+    // Handle Go Back button
+    $('#goBack').click(function(){
+        window.location.href = 'admindashcustomer.php';
     });
 });
 </script>

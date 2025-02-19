@@ -183,65 +183,69 @@ const allCategoriesButton = document.getElementById('all-categories-button');
       <div class="w-full md:w-1/2 p-8">
         <h2 class="text-2xl font-semibold text-yellow-600">Contact Us</h2>
         <p class="text-gray-600 mt-2">Fill out the form and we'll get back to you.</p>
-        <form class="mt-6 space-y-4">
-          <div class="flex flex-col md:flex-row md:space-x-4">
-            <input
-              type="text"
-              placeholder="First Name"
-              class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              aria-label="First Name"
-              required
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              aria-label="Last Name"
-              required
-            />
-          </div>
-          <input
-            type="email"
-            placeholder="Email"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-            aria-label="Email"
-            required
-          />
-          <input
-            type="tel"
-            placeholder="Phone #"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-            aria-label="Phone Number"
-          />
-          <div class="flex flex-col md:flex-row md:space-x-4">
-            <select
-              class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              aria-label="Appointment Type"
-            >
-              <option selected disabled>Appt Type</option>
-              <option>Consultation</option>
-              <option>Fitting</option>
-            </select>
-            <input
-              type="date"
-              class="w-full md:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-              aria-label="Appointment Date"
-            />
-          </div>
-          <textarea
-            placeholder="Notes"
-            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none"
-            rows="4"
-            aria-label="Additional Notes"
-          ></textarea>
-          <button
-            type="submit"
-            class="w-full bg-yellow-700 text-white py-3 rounded-lg hover:bg-yellow-700 transition"
-          >
-            Submit
-          </button>
+        <contact-us-form></contact-us-form>
+        <script>
+            class ContactUsForm extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.render();
+  }
 
-        </form>
+  render() {
+    this.shadowRoot.innerHTML = `
+      <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+      <form id="contactForm" class="max-w-md mx-auto p-6 space-y-4">
+        <input type="text" id="firstName" placeholder="First Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+        <input type="text" id="lastName" placeholder="Last Name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+        <input type="email" id="email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+        <input type="tel" id="phone" placeholder="Phone #" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none">
+        <select id="apptType" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+          <option selected disabled>Appt Type</option>
+          <option>Consultation</option>
+          <option>Fitting</option>
+        </select>
+        <input type="date" id="apptDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" required>
+        <textarea id="notes" placeholder="Notes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-400 focus:outline-none" rows="4"></textarea>
+        <button type="submit" class="w-full bg-yellow-700 text-white py-3 rounded-lg hover:bg-yellow-800 transition">Submit</button>
+      </form>
+    `;
+
+    this.addEventListeners();
+  }
+
+  addEventListeners() {
+    const form = this.shadowRoot.querySelector("#contactForm");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const formData = {
+        firstName: this.shadowRoot.querySelector("#firstName").value,
+        lastName: this.shadowRoot.querySelector("#lastName").value,
+        email: this.shadowRoot.querySelector("#email").value,
+        phone: this.shadowRoot.querySelector("#phone").value,
+        apptType: this.shadowRoot.querySelector("#apptType").value,
+        apptDate: this.shadowRoot.querySelector("#apptDate").value,
+        notes: this.shadowRoot.querySelector("#notes").value
+      };
+
+      console.log("Form Submitted:", formData);
+
+      this.dispatchEvent(new CustomEvent("formSubmitted", {
+        detail: formData,
+        bubbles: true,
+        composed: true
+      }));
+
+      form.reset();
+    });
+  }
+}
+
+customElements.define("contact-us-form", ContactUsForm);
+
+        </script>
       </div>
     </div>
   </div>

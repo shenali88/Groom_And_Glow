@@ -46,11 +46,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Package Item</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+
+    body {
+      background-image: url('https://th.bing.com/th/id/R.70c7a6f6247af6463b706acd50c52499?rik=Et04VC3%2f353ERg&pid=ImgRaw&r=0'); /* Replace with your wedding background */
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    </style>
 </head>
 <body class="bg-gray-100 flex justify-center items-center min-h-screen">
     
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
-        <h2 class="text-2xl font-bold text-gray-800 text-center mb-6">Add a New Package Item</h2>
+        <h2 class="text-2xl font-bold text-yellow-600 text-center mb-6">Add a New Package Item</h2>
         
         <form method="POST" action="" class="space-y-4">
             <div>
